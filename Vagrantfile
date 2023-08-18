@@ -1,22 +1,17 @@
 Vagrant.configure("2") do |config|
 
-    config.vm.box = "ubuntu/focal64"
+    config.vm.box = "ubuntu/focal64" # os definition
 
-N = 1
+N = 2 # number of machines to create, one for master, the rest are slaves
 
     if N == 1
-        config.vm.define "master", primary: true do |master|
-            master.vm.hostname = "master"
-            master.vm.provider "virtualbox" do |vb|
-                vb.name = "master"
-                vb.memory = "4096"
-                vb.cpus = 4
+        config.vm.define "master", primary: true do |master| # vm definition
+            master.vm.hostname = "master" # hostname
+            master.vm.provider "virtualbox" do |vb| # hypervisor definition
+                vb.name = "master" # vm name
+                vb.memory = "4096" # ammount of memory
+                vb.cpus = 4 # number of cores
             end
-            '''
-            master.vm.provision "ansible" do |ansible|
-                ansible.playbook = "playbooks/master-inventory.yml"
-            end
-            '''
         end
     else
         config.vm.define "master", primary: true do |master|
@@ -26,13 +21,8 @@ N = 1
                 vb.memory = "4096"
                 vb.cpus = 4
             end
-            '''
-            master.vm.provision "ansible" do |ansible|
-                ansible.playbook = "playbooks/master-inventory.yml"
-            end
-            '''
         end
-        (1..N).each do |i|
+        (1..N-1).each do |i|
             config.vm.define "slave0#{i}" do |slave|
                 slave.vm.hostname = "slave0#{i}"
                 slave.vm.provider "virtualbox" do |vb|
@@ -40,13 +30,6 @@ N = 1
                     vb.memory = "2048"
                     vb.cpus = 2
                 end
-                '''
-                if i == 1
-                    slave.vm.provision "ansible" do |ansible|
-                        ansible.playbook = "playbooks/backend-inventory.yml"
-                    end
-                end
-                '''
             end
         end
     end
