@@ -2,7 +2,8 @@ Vagrant.configure("2") do |config|
 
     config.vm.box = "ubuntu/focal64" # os definition
 
-N = 2 # number of machines to create, one for master, the rest are slaves
+N = 2 # number of machines to create, one for master
+S = N-1 # number of slaves
 
     if N == 1
         config.vm.define "master", primary: true do |master| # vm definition
@@ -22,7 +23,7 @@ N = 2 # number of machines to create, one for master, the rest are slaves
                 vb.cpus = 4
             end
         end
-        (1..N-1).each do |i|
+        (1..S).each do |i|
             config.vm.define "slave0#{i}" do |slave|
                 slave.vm.hostname = "slave0#{i}"
                 slave.vm.provider "virtualbox" do |vb|
